@@ -65,7 +65,6 @@ def score():
         died_text = basic_font.render('You died!:', True, red)
         screen.blit(died_text, (200, 200))
 
-
 # General setup
 pygame.init()
 clock = pygame.time.Clock()
