@@ -65,6 +65,7 @@ def score():
         died_text = basic_font.render('You died!:', True, red)
         screen.blit(died_text, (200, 200))
 
+
 # General setup
 pygame.init()
 clock = pygame.time.Clock()
@@ -125,7 +126,6 @@ while running:
     if playing:  # Führe Spiellogik nur aus, wenn das Spiel aktiv ist
         ball_animation()
         player_animation()
-
 
     # Visuals
     screen.fill(bg_color)
