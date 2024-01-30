@@ -118,7 +118,7 @@ opponent_score = 0
 basic_font = pygame.font.Font('freesansbold.ttf', 32)
 
 # sound
-plob_sound = pygame.mixer.Sound("Plob.ogg")
+plob_sound = pygame.mixer.Sound("pong.ogg")
 score_sound = pygame.mixer.Sound("score.ogg")
 
 while True:

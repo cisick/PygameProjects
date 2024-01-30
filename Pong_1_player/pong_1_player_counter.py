@@ -1,6 +1,7 @@
 import pygame
 import random
 import sys
+import time
 
 
 def ball_animation():
@@ -32,10 +33,13 @@ def player_animation():
 
 
 def ball_start():
-    global ball_speed_x, ball_speed_y, respawn_counter, collision_counter, playing
+    global ball_speed_x, ball_speed_y, respawn_counter, collision_counter, playing, start_time
     ball.center = (screen_width / 2, screen_height - 200)
     ball_speed_y *= -1
     ball_speed_x *= random.choice((1, -1))
+    player.center = (screen_width / 2, screen_height - 20)
+    if respawn_counter > 0:
+        countdown()
 
 
 def score():
@@ -61,7 +65,7 @@ def score():
     screen.blit(catch_counter, (300, 550))  # Position des gefangenen Bälle Texts und Bilds
     screen.blit(lost_balls_counter, (300, 600))  # Position des verlorenen Bälle Texts und Bilds
 
-    if playing == False and respawn_counter == 0:
+    if not playing and respawn_counter == 0:
         # Texte rendern
         died_text = endscreen_font.render('You died!', True, red)
         newGame_text = basic_font.render('Start New Game? Press N', True, red)
@@ -77,6 +81,29 @@ def score():
         # Texte auf dem Bildschirm platzieren
         screen.blit(died_text, died_text_rect)
         screen.blit(newGame_text, newGame_text_rect)
+
+
+def countdown():
+    global playing, start_time
+    for i in range(3, 0, -1):
+        screen.fill(bg_color)
+        pygame.draw.aaline(screen, red, (0, screen_height - 100), (screen_width, screen_height - 100))
+        # Ball und Spieler zeichnen
+        pygame.draw.rect(screen, light_grey, player)
+        pygame.draw.ellipse(screen, light_grey, ball)
+        # Score anzeigen
+        score()
+        # Countdown anzeigen
+        countdown_text = countdown_font.render(str(i), True, light_grey)
+        countdown_text_rect = countdown_text.get_rect(center=(screen_width // 2, screen_height // 2))
+        screen.blit(countdown_text, countdown_text_rect)
+        pygame.display.flip()
+        pygame.time.delay(1000)
+        screen.fill(bg_color)
+        pygame.draw.aaline(screen, red, (0, screen_height - 100), (screen_width, screen_height - 100))
+        pygame.display.flip()
+    playing = True
+    start_time = time.time()  # Startzeit festlegen
 
 
 # General setup
@@ -106,14 +133,21 @@ life = 4
 respawn_counter = life
 running = True
 playing = False
+start_time = None
 
 # Score text
 score_font = pygame.font.Font('freesansbold.ttf', 20)
 basic_font = pygame.font.Font('freesansbold.ttf', 32)
 endscreen_font = pygame.font.Font('freesansbold.ttf', 70)
+countdown_font = pygame.font.Font('freesansbold.ttf', 100)
+
+pygame.display.set_caption("Pong Singleplayer - Playing" if playing else "Pong Singleplayer - Paused")
+# Countdown beim Spielstart anzeigen
+countdown()
+
 while running:
 
-    pygame.display.set_caption("Pong Singelplayer - Playing" if playing else "Pong Singelplayer - Paused")
+    pygame.display.set_caption("Pong Singleplayer - Playing" if playing else "Pong Singleplayer - Paused")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -136,8 +170,9 @@ while running:
                 # Starte ein neues Spiel
                 respawn_counter = life
                 collision_counter = 0
-                start_time = None  # Zurücksetzen der Startzeit für den Countdown
+                start_time = None  # Zurücksetzen der Startzeit für den Timer
                 playing = True
+                countdown()
 
     if respawn_counter <= 0:
         respawn_counter = 0
@@ -155,6 +190,12 @@ while running:
     pygame.draw.rect(screen, light_grey, player)
     pygame.draw.ellipse(screen, light_grey, ball)
     pygame.draw.aaline(screen, red, (0, screen_height - 100), (screen_width, screen_height - 100))
+
+    # Spielzeit anzeigen, wenn das Spiel läuft und start_time definiert ist
+    if playing and start_time is not None:
+        elapsed_time = round(time.time() - start_time)
+        time_text = score_font.render(f'Time: {elapsed_time}', True, light_grey)
+        screen.blit(time_text, (10, 10))
 
     pygame.display.flip()
     clock.tick(60)
