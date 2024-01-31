@@ -15,7 +15,7 @@ def ball_animation():
         ball_start()
 
     if ball.colliderect(player) or ball.colliderect(opponent):
-        ball_speed_x *= -1
+        ball_speed_y *= -1
 
 
 def player_animation():

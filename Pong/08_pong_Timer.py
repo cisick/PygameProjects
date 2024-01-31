@@ -110,7 +110,7 @@ ball_speed_y = 7 * random.choice((1, -1))
 player_speed = 0
 opponent_speed = 7
 ball_moving = False
-score_time = True
+score_time = 1
 
 # Score Text
 player_score = 0
