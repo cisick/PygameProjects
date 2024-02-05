@@ -237,7 +237,7 @@ while running:
     if playing and start_time is not None:
         elapsed_time = round(time.time() - start_time)
         time_text = basic_font.render(f'Time: {elapsed_time}', True, light_grey)
-        screen.blit(time_text, (10, 70))  # Text etwas weiter unten positionieren
+        screen.blit(time_text, (10, 70))
 
     pygame.display.flip()
     clock.tick(60)
