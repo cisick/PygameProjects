@@ -12,7 +12,9 @@ def ball_animation():
     if ball.bottom >= screen_height:
         pygame.mixer.Sound.play(life_lose_sound)
         respawn_counter -= 1
+        print(1)
         ball_start()
+        print(2)
     if ball.top <= 0:
         pygame.mixer.Sound.play(plob_sound)
         ball_speed_y *= -1

@@ -8,7 +8,6 @@ def ball_animation():
 
     ball.x += ball_speed_x
     ball.y += ball_speed_y
-
     if ball.bottom >= screen_height:
         respawn_counter -= 1
         ball_start()
@@ -30,6 +29,8 @@ def ball_animation():
                 diamond_counter += 1
                 d_treffer_pro_level_counter += 1
                 d_treffer_until_destroyed_counter = 0
+                print(diamond)
+                print(len(diamonds))
                 if d_treffer_pro_level_counter >= 10:
                     level += 1
                     spawn_diamonds()
@@ -55,6 +56,7 @@ def ball_start():
     ball_speed_y *= -1
     ball_speed_x *= random.choice((1, -1))
     player.center = (screen_width / 2, screen_height - 20)
+
     if respawn_counter > 0:
         countdown()
 
@@ -107,13 +109,17 @@ def countdown():
         countdown_text = countdown_font.render(str(i), True, light_grey)
         countdown_text_rect = countdown_text.get_rect(center=(screen_width // 2, screen_height // 2))
         screen.blit(countdown_text, countdown_text_rect)
-        pygame.time.delay(1000)
+        if i < 3:
+            pygame.time.delay(1000)
+
         pygame.display.flip()
+
     playing = True
     start_time = time.time()  # Startzeit festlegen
 
 def spawn_diamonds():
     global diamonds
+    print("SPAWN")
     diamonds = []
     for _ in range(10):
         diamond = pygame.Rect(random.randint(0, screen_width - 40), random.randint(0, screen_height // 2), 40, 40)
@@ -193,9 +199,11 @@ while running:
                 player_speed -= 10
             if event.key == pygame.K_n and not playing and respawn_counter == 0:
                 # Starte ein neues Spiel
+                ball = pygame.Rect(screen_width / 2 - 15, screen_height - 200, 30, 30)
                 respawn_counter = life
                 collision_counter = 0
                 diamond_counter = 0
+                d_treffer_pro_level_counter = 0
                 level = 1
                 start_time = None  # Zurücksetzen der Startzeit für den Timer
                 playing = True
