@@ -162,11 +162,11 @@ d_treffer_pro_level_counter = 0
 d_treffer_until_destroyed_counter = 10
 level = 1
 diamonds = []
-diamond_icon = pygame.image.load('diamant.png')
+diamond_icon = pygame.image.load('images/diamant.png')
 diamond_icon = pygame.transform.scale(diamond_icon, (40, 40))
-gefangene_baelle_icon = pygame.image.load('gefangene_baelle_01.png')
+gefangene_baelle_icon = pygame.image.load('images/gefangene_baelle_01.png')
 gefangene_baelle_icon = pygame.transform.scale(gefangene_baelle_icon, (40, 40))
-verlorene_baelle_icon = pygame.image.load('left_life_01.png')
+verlorene_baelle_icon = pygame.image.load('images/left_life_01.png')
 verlorene_baelle_icon = pygame.transform.scale(verlorene_baelle_icon, (40, 40))
 
 running = True
@@ -174,11 +174,11 @@ playing = False
 start_time = None
 
 # Sound
-plob_sound = pygame.mixer.Sound("pong.ogg")
-score_sound = pygame.mixer.Sound("score.ogg")
-happy_countdown_sound = pygame.mixer.Sound('happy_countdown.wav')
-life_lose_sound = pygame.mixer.Sound('life_lose.wav')
-gameover_sound = pygame.mixer.Sound('gameover.wav')
+plob_sound = pygame.mixer.Sound("audio/pong.ogg")
+score_sound = pygame.mixer.Sound("audio/score.ogg")
+happy_countdown_sound = pygame.mixer.Sound('audio/happy_countdown.wav')
+life_lose_sound = pygame.mixer.Sound('audio/life_lose.wav')
+gameover_sound = pygame.mixer.Sound('audio/gameover.wav')
 
 
 # Score text

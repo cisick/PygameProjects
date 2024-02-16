@@ -140,11 +140,11 @@ respawn_counter = life
 diamond_counter = 0
 level = 1
 diamonds = []
-diamond_icon = pygame.image.load('diamant.png')
+diamond_icon = pygame.image.load('images/diamant.png')
 diamond_icon = pygame.transform.scale(diamond_icon, (40, 40))
-gefangene_baelle_icon = pygame.image.load('gefangene_baelle_01.png')
+gefangene_baelle_icon = pygame.image.load('images/gefangene_baelle_01.png')
 gefangene_baelle_icon = pygame.transform.scale(gefangene_baelle_icon, (40, 40))
-verlorene_baelle_icon = pygame.image.load('left_life_01.png')
+verlorene_baelle_icon = pygame.image.load('images/left_life_01.png')
 verlorene_baelle_icon = pygame.transform.scale(verlorene_baelle_icon, (40, 40))
 
 running = True

@@ -1,36 +1,13 @@
 import pygame
 import random
 
-COLOR_WHITE = (255, 255, 255)
-COLOR_BLACK = (0, 0, 0)
-COLOR_GRAY = (50, 50, 50)
-COLOR_GREEN = (0, 255, 0)
-
-X_PLAYER = 600
-X_MACHINE = 30
-
-score_player = 0
-score_machine = 0
-
-rect_player = None
-rect_machine = None
-circ_ball = None
-
-dy_player = 0
-dy_machine = 0
-
-gameOver = False;
-#dx,dx,x,y,r
-
-ball = []
-
 
 def setup_init(pyg, scr):
     global rect_player, rect_machine, circ_ball, ball, score_machine, score_player, gameOver
 
     score_player = 0
     score_machine = 0
-    gameOver = False;
+    gameOver = False
     scr.fill(COLOR_BLACK)
     x, y = scr.get_size()
 

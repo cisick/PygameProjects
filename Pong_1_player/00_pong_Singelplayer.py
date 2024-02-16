@@ -40,9 +40,9 @@ def ball_start():
 
 def score():
     # Laden der Bilder für die Symbole
-    gefangene_baelle_icon = pygame.image.load('gefangene_baelle_01.png')
+    gefangene_baelle_icon = pygame.image.load('images/gefangene_baelle_01.png')
     gefangene_baelle_icon = pygame.transform.scale(gefangene_baelle_icon, (40, 40))
-    verlorene_baelle_icon = pygame.image.load('left_life_01.png')
+    verlorene_baelle_icon = pygame.image.load('images/left_life_01.png')
     verlorene_baelle_icon = pygame.transform.scale(verlorene_baelle_icon, (40, 40))
 
     # Platzieren der Bilder für die Symbole auf dem Bildschirm

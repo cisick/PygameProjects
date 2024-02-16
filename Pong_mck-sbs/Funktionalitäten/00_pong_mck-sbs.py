@@ -6,7 +6,7 @@ from pypong import *
 
 pygame.init()
 pygame.display.set_caption('PyPong')
-screen = pygame.display.set_mode((640, 480))
+screen = pygame.display.set_mode((1200, 700))
 
 
 setup_init(pygame, screen)
@@ -21,7 +21,7 @@ gameOver = False
 clock = pygame.time.Clock()
 
 pygame.mixer.init()
-pygame.mixer.music.load("music.mp3")
+pygame.mixer.music.load("../music/music.mp3")
 pygame.mixer.music.play(-1)
 
 # main loop
