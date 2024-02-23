@@ -11,7 +11,8 @@ WINDOW_HEIGHT = 750
 
 # Farben
 WHITE = (255, 255, 255)
-BLACK = (205, 198, 115)
+GREEN_LIGHT = (205, 198, 115)
+DARK_SLATE_GRAY = (47, 79, 79)
 GREY49 = (125, 125, 125)
 YELLOW = (255, 255, 0)
 
@@ -19,13 +20,15 @@ YELLOW = (255, 255, 0)
 NUM_CHICKENS = 10
 
 # Zeitdauer des Spiels in Sekunden
-GAME_DURATION = 10   # 1 Minute
+GAME_DURATION = 4   # 1 Minute
 
 # Menü-Text
 MENU_FONT = pygame.font.Font(None, 30)
 TITLE_FONT = pygame.font.Font(None, 25)
 TIMER_FONT = pygame.font.Font(None, 36)
 OPTION_FONT = pygame.font.Font(None, 40)
+HIGHSCORE_FONT_H = pygame.font.Font(None, 80)
+HIGHSCORE_FONT = pygame.font.Font(None, 60)
 
 # Bildschirm aktualisierungsrate
 FPS = 60
@@ -44,6 +47,16 @@ chicken_image_left = pygame.transform.scale(chicken_image_left, (40, 40))  # Huh
 chicken_image_right = pygame.image.load('Moorhuhnbilder/Moorhuhn_02.png')
 chicken_image_right = pygame.transform.scale(chicken_image_right, (40, 40))  # Huhn auf 40x40 skalieren
 
+
+# Audio laden
+menu_sound = pygame.mixer.Sound("audio/menu_sound.mp3")
+shot_sound = pygame.mixer.Sound("audio/9mm_pistol_shot_sound.mp3")
+alarm_sound = pygame.mixer.Sound("audio/chicken_single_alarm_sound.mp3")
+e_shot_sound = pygame.mixer.Sound("audio/empty_gun_shot_sound.mp3")
+load_sound = pygame.mixer.Sound("audio/load_gun_sound.mp3")
+slap_sound = pygame.mixer.Sound("audio/hardslap.mp3")
+
+
 # Gruppe für Hühner
 all_sprites = pygame.sprite.Group()
 chickens = pygame.sprite.Group()
@@ -53,15 +66,20 @@ chickens = pygame.sprite.Group()
 def init():
     global all_sprites, chickens, score, ammo, playing, option_menu, highscore_menu, menu_shown
     # Punkte und Munition zurücksetzen
+    pygame.display.set_caption("Moorhuhn Jagd")
     playing = True
     option_menu = False
     highscore_menu = False
+    player.score = 0
     score = 0
     ammo = 8
     window.blit(background_image, (0, 0))
     all_sprites = pygame.sprite.Group()
     chickens = pygame.sprite.Group()
     menu_shown = True
+
+    # Stop Music
+    menu_sound.stop()
 
 # Spieler
 class Player(pygame.sprite.Sprite):
@@ -124,7 +142,7 @@ font = pygame.font.Font(None, 36)
 
 # Menü anzeigen
 def show_menu():
-    window.fill(BLACK)
+    window.fill(GREEN_LIGHT)
     # Zentriertes Menübild
     menu_rect = menu_image.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
     window.blit(menu_image, menu_rect)
@@ -138,9 +156,9 @@ def show_menu():
     option_text_rect = start_text.get_rect(center=(WINDOW_WIDTH // 2, 240))
     highscore_text_rect = start_text.get_rect(center=(WINDOW_WIDTH // 2, 305))
     quit_text_rect = start_text.get_rect(center=(WINDOW_WIDTH // 2, 370))
-    # Button-Umrandung zeichnen
-    # pygame.draw.rect(window, YELLOW, (start_text_rect.left - 10, start_text_rect.top - 10,
-    #                                  start_text_rect.width + 20, start_text_rect.height + 20), 3)
+
+
+    pygame.mixer.Sound.play(menu_sound) # audio
 
     window.blit(title_text, title_text_rect)
     window.blit(start_text, start_text_rect)
@@ -149,26 +167,55 @@ def show_menu():
     window.blit(quit_text, quit_text_rect)
     pygame.display.flip()
 
-def show_option_menu():
-    window.fill(BLACK)
-    key_assignment = OPTION_FONT.render('Tastenbelegung: ', True, WHITE)
-    key_assignment_text_rect = key_assignment.get_rect(topleft=(300, 150))
-    ESC_text = OPTION_FONT.render('ESC |  Zurück zum Menu ', True, WHITE)
-    ESC_text_rect = ESC_text.get_rect(topleft=(300, 200))
-    R_text = OPTION_FONT.render('R     |  Nachladen ', True, WHITE)
-    R_text_rect = R_text.get_rect(topleft=(300, 250))
-    mouse_left_text = OPTION_FONT.render('Maus links   |  Schießen ', True, WHITE)
-    mouse_left_text_rect = mouse_left_text.get_rect(topleft=(300, 300))
-    space_text = OPTION_FONT.render('Leertaste   |  Spiel pausieren ', True, WHITE)
-    space_text_rect = space_text.get_rect(topleft=(300, 350))
 
+def show_option_menu():
+    global WINDOW_HEIGHT
+    window.fill(GREEN_LIGHT)
+    # Erstelle eine Linie
+    start_pos = (300, 110)  # Senkrechte Linie startet in der Mitte oben
+    end_pos = (300, WINDOW_HEIGHT)
+    pygame.draw.line(window, DARK_SLATE_GRAY, start_pos, end_pos, 5)
+
+    # Überschrift
+    key_assignment = HIGHSCORE_FONT_H.render('Tastenbelegung: ', True, DARK_SLATE_GRAY)
+    key_assignment_text_rect = key_assignment.get_rect(topleft=(50, 40))
+
+    # Taste
+    esc = HIGHSCORE_FONT.render('ESC', True, DARK_SLATE_GRAY)
+    esc_rect = esc.get_rect(topleft=(50, 110))
+    r = HIGHSCORE_FONT.render('R', True, DARK_SLATE_GRAY)
+    r_rect = r.get_rect(topleft=(50, 170))
+    mouse_left = HIGHSCORE_FONT.render('Maus links', True, DARK_SLATE_GRAY)
+    mouse_left_rect = mouse_left.get_rect(topleft=(50, 230))
+    space = HIGHSCORE_FONT.render('Leertaste', True, DARK_SLATE_GRAY)
+    space_rect = space.get_rect(topleft=(50, 290))
+
+    # Text
+    esc_text = HIGHSCORE_FONT.render('Zurück zum Menu', True, DARK_SLATE_GRAY)
+    esc_text_rect = esc_text.get_rect(topleft=(350, 110))
+    r_text = HIGHSCORE_FONT.render('Nachladen', True, DARK_SLATE_GRAY)
+    r_text_rect = r_text.get_rect(topleft=(350, 170))
+    mouse_left_text = HIGHSCORE_FONT.render('Schießen', True, DARK_SLATE_GRAY)
+    mouse_left_text_rect = mouse_left_text.get_rect(topleft=(350, 230))
+    space_text = HIGHSCORE_FONT.render('Spiel pausieren', True, DARK_SLATE_GRAY)
+    space_text_rect = space_text.get_rect(topleft=(350, 290))
+
+    # Anzeige:
+    # Überschrift
     window.blit(key_assignment, key_assignment_text_rect)
-    window.blit(ESC_text, ESC_text_rect)
-    window.blit(R_text, R_text_rect)
+    # Taste anzeigen
+    window.blit(esc, esc_rect)
+    window.blit(r, r_rect)
+    window.blit(mouse_left, mouse_left_rect)
+    window.blit(space, space_rect)
+
+    # Text anzeigen
+    window.blit(esc_text, esc_text_rect)
+    window.blit(r_text, r_text_rect)
     window.blit(mouse_left_text, mouse_left_text_rect)
     window.blit(space_text, space_text_rect)
-    pygame.display.flip()
 
+    pygame.display.flip()
 
 def input_username():
     input_active = True
@@ -184,14 +231,18 @@ def input_username():
                     player_name = player_name[:-1]
                 else:
                     player_name += event.unicode
-        window.fill(WHITE)
-        window.blit(font.render("Geben Sie Ihren Benutzernamen ein:", True, BLACK), (50, 50))
-        window.blit(font.render(player_name, True, BLACK), (50, 100))
+        window.fill(GREEN_LIGHT)
+        username = HIGHSCORE_FONT.render("Geben Sie Ihren Namen ein:", True, DARK_SLATE_GRAY)
+        username_rect = username.get_rect(center=(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 - 50))
+        user_input = HIGHSCORE_FONT.render(player_name, True, DARK_SLATE_GRAY)
+        user_input_rect = user_input.get_rect(center=(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + 50))
+        window.blit(username, username_rect)
+        window.blit(user_input, user_input_rect)
         pygame.display.flip()
 
-    # Hier setzen wir den Spielernamen in der Player-Instanz
-
+    # Spielernamen in der Player-Instanz setzen
     player.name = player_name
+
 
 def save_score(player):
     try:
@@ -213,18 +264,18 @@ def save_score(player):
 
 
 def show_highscore():
-    window.fill(BLACK)
+    window.fill(GREEN_LIGHT)
     try:
         with open('highscores.dat', 'rb') as file:
             highscores = pickle.load(file)
-            window.fill(BLACK)
-            window.blit(font.render("Highscores:", True, WHITE), (50, 50))
+            window.fill(GREEN_LIGHT)
+            window.blit(HIGHSCORE_FONT_H.render("Highscore:", True, DARK_SLATE_GRAY), (50, 40))
             for i, player_data in enumerate(highscores, 1):
                 name, score = player_data  # Entpacken des Spielerdaten-Tupels
-                window.blit(font.render(f"{i}. {name}: {score}", True, WHITE), (50, 50 + i * 30))
+                window.blit(HIGHSCORE_FONT.render(f"{i}. {name}: {score}", True, DARK_SLATE_GRAY), (50, 50 + i * 60))
     except FileNotFoundError:
-        window.fill(WHITE)
-        window.blit(font.render("Noch keine Highscores vorhanden.", True, BLACK), (50, 50))
+        window.fill(GREEN_LIGHT)
+        window.blit(HIGHSCORE_FONT.render("Es ist noch kein Highscore vorhanden.", True, DARK_SLATE_GRAY), (50, 50))
     pygame.display.flip()
 
 # Hauptspiel Schleife
@@ -285,21 +336,29 @@ while running:
 
                 # Überprüfe, ob Munition vorhanden ist und reduziere sie bei Klick
                 if event.key == pygame.K_r and ammo < 8:
+                    pygame.mixer.Sound.play(load_sound)
                     ammo = 8
 
         elif event.type == pygame.MOUSEBUTTONDOWN and game_running:
             # Überprüfe, ob Munition vorhanden ist und reduziere sie bei Klick
+            if ammo == 0:
+                pygame.mixer.Sound.play(e_shot_sound)
             if ammo > 0:
+                pygame.mixer.Sound.play(shot_sound)
                 ammo -= 1
                 # Überprüfe, ob ein Huhn angeklickt wurde
                 clicked_sprites = [sprite for sprite in chickens if sprite.rect.collidepoint(event.pos)]
                 if clicked_sprites:
                     clicked_sprites[0].kill()  # Entferne das Huhn
+                    pygame.mixer.Sound.play(slap_sound)
                     player.increase_score(1)  # Erhöhe den Punktestand
+
+
     if game_running:
         # Spiel läuft
         pygame.display.set_caption("Moorhuhn Jagd - Playing" if playing else "Moorhuhn Jagd - Paused")
         current_time = pygame.time.get_ticks()
+        menu_sound.stop()
         if playing:
             if current_time >= game_end_timer:
                 # Spielzeit abgelaufen
@@ -330,7 +389,7 @@ while running:
                 # Punkte- und Munitionszähler anzeigen
                 score_text = font.render("Punkte: " + str(player.score), True, WHITE)  # Spielerpunkte anzeigen
                 ammo_text = font.render("Munition: " + str(max(ammo, 0)), True, WHITE)  # Munition kann nicht negativ sein
-                timer_text = TIMER_FONT.render("Verbleibende Zeit: " + str(max(0, (game_end_timer - current_time) // 1000)), True, WHITE)
+                timer_text = TIMER_FONT.render("Verbleibende Zeit: " + str(max(0, (game_end_timer - current_time) // 1000)) + " sec" , True, WHITE)
                 window.blit(score_text, (10, 10))
                 window.blit(ammo_text, (10, 40))
                 window.blit(timer_text, (10, 70))
