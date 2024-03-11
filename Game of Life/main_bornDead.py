@@ -195,6 +195,7 @@ def adjust_grid(positions):
         if len(neighbors) in [2, 3]:
             new_positions.add(position)
             born += 1
+            alive += 1
 
     for position in all_neighbors:
         neighbors = get_neighbors(position)
@@ -203,10 +204,11 @@ def adjust_grid(positions):
         if len(neighbors) == 3:
             new_positions.add(position)
             born += 1
-    global died
+            alive += 1
 
     if len(positions) > len(new_positions):
         died += len(positions) - len(new_positions)
+        alive -= len(positions) - len(new_positions)
 
     return new_positions
 
@@ -227,6 +229,7 @@ def main():
     running = True
     playing = False
     count = 0
+    global alive
 
     positions = set()
     grid = [[None for i in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
@@ -255,6 +258,7 @@ def main():
                 pos = (col, row)
                 
                 if x <= 699 and y <= 699:
+                    print("Hallo")
                     if pos in positions:
                         positions.remove(pos)
                         global died
@@ -281,13 +285,14 @@ def main():
                     generation = 1
                     born = 0
                     died = 0
+                    alive = 0
 
         screen.fill(GREY)
 
         display_score()
 
-        global alive
-        alive = len(positions)
+
+        # alive = len(positions)
 
         draw_grid_with_images(positions, grid, cell_images)
         pygame.display.update()

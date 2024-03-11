@@ -338,7 +338,7 @@ def change_cursor_game():
     pos = pygame.mouse.get_pos()
     pos = (pos[0] - 30, pos[1] - 30)
     window.blit(cursor_game, pos)
-    pygame.display.update()
+    # pygame.display.update()
 
 
 def change_cursor_option():
