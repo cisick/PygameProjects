@@ -191,6 +191,7 @@ def adjust_grid(positions):
         if len(neighbors) in [2, 3]:
             new_positions.add(position)
             born += 1
+            alive += 1
 
     for position in all_neighbors:
         neighbors = get_neighbors(position)
@@ -199,10 +200,11 @@ def adjust_grid(positions):
         if len(neighbors) == 3:
             new_positions.add(position)
             born += 1
-    global died
+            alive += 1
 
     if len(positions) > len(new_positions):
         died += len(positions) - len(new_positions)
+        alive -= len(positions) - len(new_positions)
 
     return new_positions
 
@@ -223,6 +225,7 @@ def main():
     running = True
     playing = False
     count = 0
+    global alive
 
     positions = set()
     grid = [[None for i in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
@@ -237,7 +240,7 @@ def main():
             count = 0
             positions = adjust_grid(positions)
 
-        pygame.display.set_caption("Game of Life - Playing" if playing else "Game of Life - Paused")
+        pygame.display.set_caption("Game of Life_01 - Playing" if playing else "Game of Life_01 - Paused")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -254,10 +257,12 @@ def main():
                         positions.remove(pos)
                         global died
                         died += 1
+                        alive -= 1
                     else:
                         positions.add(pos)
                         global born
                         born += 1
+                        alive += 1
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -276,13 +281,13 @@ def main():
                     generation = 1
                     born = 0
                     died = 0
+                    alive = 0
 
         screen.fill(GREY)
 
         display_score()
 
-        global alive
-        alive = len(positions)
+        # alive = len(positions)
 
         draw_grid_with_images(positions, grid, cell_images)
         pygame.display.update()
@@ -290,21 +295,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-class cell:
-    # Konstruktor-Methode
-    def __init__(self, wert):
-        self.wert = wert
-
-    # Eine Methode der Klasse
-    def anzeigen(self):
-        print("Der Wert ist:", self.wert)
-
-
-# Eine Instanz der Klasse erstellen
-cell1 = cell(42)
-
-# Auf Methoden und Attribute der Instanz zugreifen
-cell1.anzeigen()
-print("Der Wert des Objekts ist:", cell1 .wert)
