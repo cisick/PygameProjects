@@ -83,6 +83,7 @@ while run:
                     wrong_attempts += 1
 
 
+
     # Bildschirm löschen
     win.fill(WHITE)
 
