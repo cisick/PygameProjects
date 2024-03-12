@@ -73,7 +73,7 @@ while run:
                 word = random.choice(word_list)
                 guessed = ["_" for _ in word]
 
-            if event.key >= pygame.K_a and event.key <= pygame.K_z:
+            if pygame.K_a <= event.key <= pygame.K_z and not (wrong_attempts == 6 or "_" not in guessed):
                 letter = chr(event.key)
                 if letter in word:
                     for i, char in enumerate(word):
