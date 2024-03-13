@@ -43,7 +43,7 @@ for i in range(num_players):
 ball_radius = 20
 ball_x = window_width // 2
 ball_y = window_height // 2
-ball_speed = 8
+ball_speed = 15
 ball_velocity_x = 0
 ball_velocity_y = 0
 
@@ -112,8 +112,13 @@ while running:
         players[i][0][1] += int(axis_y * 7)
 
         # Begrenze die Position des Spielers innerhalb des Spielfelds
-        players[i][0][0] = max(10 + player_radius, min(players[i][0][0], window_width - 10 - player_radius))
-        players[i][0][1] = max(edge + 10 + player_radius, min(players[i][0][1], window_height - edge - 10 - player_radius))
+        # für Spieler 1
+        players[0][0][0] = max(10 + player_radius, min(players[0][0][0], window_width//2 - 10 - player_radius))
+        players[0][0][1] = max(edge + 10 + player_radius, min(players[0][0][1], window_height - edge - 10 - player_radius))
+
+        # für Spieler 2
+        players[1][0][0] = max(window_width//2 + 10 + player_radius, min(players[1][0][0], window_width - 10 - player_radius))
+        players[1][0][1] = max(edge + 10 + player_radius, min(players[1][0][1], window_height - edge - 10 - player_radius))
 
         # Kollisionserkennung und Reaktion
         dist = distance(ball_x, ball_y, players[i][0][0], players[i][0][1])
@@ -135,14 +140,14 @@ while running:
     if ball_x - ball_radius < 0:
         if goal_left.collidepoint(ball_x, ball_y):
             player_scores[1] += 1
-            ball_x = window_width // 2
+            ball_x = window_width // 2 - 100
             ball_y = window_height // 2
             ball_velocity_x = 0
             ball_velocity_y = 0
     elif ball_x + ball_radius > window_width:
         if goal_right.collidepoint(ball_x, ball_y):
             player_scores[0] += 1
-            ball_x = window_width // 2
+            ball_x = window_width // 2 + 100
             ball_y = window_height // 2
             ball_velocity_x = 0
             ball_velocity_y = 0
